@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Nuevo_Proyecto.Catalogos;
 using Nuevo_Proyecto.Data;
 using Nuevo_Proyecto.Models.DTOs;
+using Nuevo_Proyecto.Models.Entities;
 using Nuevo_Proyecto.Services.Helpers;
 using Nuevo_Proyecto.Services.Interfaz_service;
 
@@ -104,6 +105,17 @@ namespace Nuevo_Proyecto.Services
                     ValorInventario = m.Producto.PrecioVenta * m.StockNuevo
                 })
                 .ToList();
+        }
+
+        public IReadOnlyList<NotificacionesStockCritico> GetNotificacionesStockCritico()
+        {
+            using var db = _factory.CreateDbContext();
+            return db.NotificacionesStockCritico
+                .AsNoTracking()
+                .Include(n => n.Productos)
+                .OrderByDescending(n => n.FechaRegistro)
+                .ToList()
+                .AsReadOnly();
         }
 
         public int Reactivar(string codigo, int stock, int minimo, int empleadoId, string motivo = "Producto reactivado")

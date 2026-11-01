@@ -47,6 +47,10 @@ public partial class Dev_ComideriaDbContext : DbContext
 
     public virtual DbSet<InventarioConValor> InventarioConValor { get; set; }
 
+    public virtual DbSet<NotificacionesStockCritico> NotificacionesStockCritico { get; set; }
+
+    public virtual DbSet<TriggerLogStockCritico> TriggerLogStockCritico { get; set; }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -278,6 +282,43 @@ public partial class Dev_ComideriaDbContext : DbContext
             entity.Property(e => e.ProductoId).HasColumnName("ProductoID");
             entity.Property(e => e.TipoMovimiento).HasMaxLength(50);
             entity.Property(e => e.ValorInventario).HasColumnType("decimal(21, 2)");
+        });
+
+        modelBuilder.Entity<NotificacionesStockCritico>(entity =>
+        {
+            entity.HasKey(e => e.NotificacionId).HasName("PK__Notificaciones__Stock__Critico");
+
+            entity.ToTable("NotificacionesStockCritico");
+
+            entity.Property(e => e.NotificacionId).HasColumnName("NotificacionID");
+            entity.Property(e => e.ProductoId).HasColumnName("ProductoID");
+            entity.Property(e => e.FechaRegistro)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.Productos).WithMany()
+                .HasForeignKey(d => d.ProductoId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_NotificacionesStockCritico_Productos");
+        });
+
+        modelBuilder.Entity<TriggerLogStockCritico>(entity =>
+        {
+            entity.HasKey(e => e.LogId).HasName("PK__TriggerLog__Stock__Critico");
+
+            entity.ToTable("TriggerLogStockCritico");
+
+            entity.Property(e => e.LogId).HasColumnName("LogID");
+            entity.Property(e => e.ProductoId).HasColumnName("ProductoID");
+            entity.Property(e => e.SourceTable).HasMaxLength(50);
+            entity.Property(e => e.FechaRegistro)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.Productos).WithMany()
+                .HasForeignKey(d => d.ProductoId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_TriggerLogStockCritico_Productos");
         });
 
         OnModelCreatingPartial(modelBuilder);

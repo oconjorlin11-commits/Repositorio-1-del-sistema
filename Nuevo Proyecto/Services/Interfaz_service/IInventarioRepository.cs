@@ -1,4 +1,5 @@
 using Nuevo_Proyecto.Models.DTOs;
+using Nuevo_Proyecto.Models.Entities;
 
 namespace Nuevo_Proyecto.Services.Interfaz_service
 {
@@ -11,6 +12,12 @@ namespace Nuevo_Proyecto.Services.Interfaz_service
         IReadOnlyList<ProductoInventarioDto> BuscarPorCodigoExacto(string codigo);
         IReadOnlyList<ProductoInventarioDto> BuscarPorCodigoONombreProducto(string termino);
         IReadOnlyList<MovimientoInventarioDto> GetMovimientos(DateTime? desde, DateTime? hasta);
+
+        /// <summary>
+        /// Obtiene las notificaciones de stock crítico desde la tabla NotificacionesStockCritico.
+        /// Retorna una lista de productos que tienen stock por debajo del mínimo.
+        /// </summary>
+        IReadOnlyList<NotificacionesStockCritico> GetNotificacionesStockCritico();
 
         int Reactivar(string codigo, int stock, int minimo, int empleadoId, string motivo);
 
