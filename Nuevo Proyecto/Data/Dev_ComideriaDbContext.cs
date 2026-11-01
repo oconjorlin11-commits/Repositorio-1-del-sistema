@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Nuevo_Proyecto.Models.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -56,7 +56,15 @@ public partial class Dev_ComideriaDbContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseSqlServer(AppConfig.ConnectionString);
+            if (Nuevo_Proyecto.Data.SqlLite.ConexionMonitor.VerificarEnLinea())
+                optionsBuilder.UseSqlServer(AppConfig.ConnectionString)
+                    .AddInterceptors(new Nuevo_Proyecto.Data.SqlLite.FalloConexionInterceptor());
+            else
+            {
+                optionsBuilder.UseSqlite(Nuevo_Proyecto.Data.SqlLite.CacheLocal.CadenaConexion);
+                optionsBuilder.AddInterceptors(Nuevo_Proyecto.Data.SqlLite.PendientesSync.Guardado,
+                                               Nuevo_Proyecto.Data.SqlLite.PendientesSync.Comandos);
+            }
         }
     }
 
@@ -335,4 +343,5 @@ public partial class Dev_ComideriaDbContext : DbContext
 
 
 }
+
 

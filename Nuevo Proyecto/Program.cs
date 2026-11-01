@@ -1,6 +1,7 @@
-using Nuevo_Proyecto.Models.Views;
+﻿using Nuevo_Proyecto.Models.Views;
 using Nuevo_Proyecto.Services.Helpers;
 using Nuevo_Proyecto.Services;
+using Nuevo_Proyecto.Data.SqlLite;
 using Nuevo_Proyecto.Views.FormularioUI;
 
 namespace Nuevo_Proyecto
@@ -16,6 +17,21 @@ namespace Nuevo_Proyecto
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            Application.ThreadException += (_, e) =>
+            {
+                if (ConexionMonitor.EsFalloDeConexion(e.Exception))
+                {
+                    ConexionMonitor.ReportarFallo(e.Exception);
+                    MessageBox.Show("No se pudo completar la acción porque se perdió la conexión.\nEl sistema ya trabaja sin conexión; repita la operación.",
+                        "Sin conexión", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else
+                {
+                    MessageBox.Show(e.Exception.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            };
+            ConexionMonitor.Iniciar();
 
             // Mostrar InicioSesion como diálogo modal
             using (var inicioSesion = new InicioSesion())

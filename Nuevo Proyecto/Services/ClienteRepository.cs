@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Nuevo_Proyecto.Data;
+using Nuevo_Proyecto.Data.SqlLite;
 using Nuevo_Proyecto.Models.DTOs;
 using Nuevo_Proyecto.Models.Entities;
 using Nuevo_Proyecto.Services.Helpers;
@@ -33,7 +34,18 @@ namespace Nuevo_Proyecto.Services
             Activo = c.Activo ?? false
         };
 
-        public IReadOnlyList<ClienteDto> GetActivos()
+        public IReadOnlyList<ClienteDto> GetActivos() => ConexionMonitor.Ejecutar(GetActivosInterno);
+        public IReadOnlyList<ClienteDto> BuscarPorCodigo(string codigoExacto) => ConexionMonitor.Ejecutar(() => BuscarPorCodigoInterno(codigoExacto));
+        public IReadOnlyList<string> GetNotas() => ConexionMonitor.Ejecutar(GetNotasInterno);
+        public string GetSiguienteCodigo() => ConexionMonitor.Ejecutar(GetSiguienteCodigoInterno);
+        public bool CodigoExiste(string codigo) => ConexionMonitor.Ejecutar(() => CodigoExisteInterno(codigo));
+        public bool TelefonoExiste(string telefono) => ConexionMonitor.Ejecutar(() => TelefonoExisteInterno(telefono));
+        public int Crear(ClienteDto dto) => ConexionMonitor.Ejecutar(() => CrearInterno(dto));
+        public bool Actualizar(string codigo, string nombre, string? telefono, string? direccion, string? nota, string? motivo = null) =>
+            ConexionMonitor.Ejecutar(() => ActualizarInterno(codigo, nombre, telefono, direccion, nota, motivo));
+        public ClienteDto ObtenerOCrearConsumidorFinal() => ConexionMonitor.Ejecutar(ObtenerOCrearConsumidorFinalInterno);
+
+        private IReadOnlyList<ClienteDto> GetActivosInterno()
         {
             using var db = _factory.CreateDbContext();
             return db.Clientes.AsNoTracking()
@@ -43,7 +55,7 @@ namespace Nuevo_Proyecto.Services
                 .ToList();
         }
 
-        public IReadOnlyList<ClienteDto> BuscarPorCodigo(string codigoExacto)
+        private IReadOnlyList<ClienteDto> BuscarPorCodigoInterno(string codigoExacto)
         {
             using var db = _factory.CreateDbContext();
             return db.Clientes.AsNoTracking()
@@ -53,7 +65,7 @@ namespace Nuevo_Proyecto.Services
                 .ToList();
         }
 
-        public IReadOnlyList<string> GetNotas()
+        private IReadOnlyList<string> GetNotasInterno()
         {
             using var db = _factory.CreateDbContext();
             return db.Clientes.AsNoTracking()
@@ -64,20 +76,20 @@ namespace Nuevo_Proyecto.Services
                 .ToList()!;
         }
 
-        public string GetSiguienteCodigo()
+        private string GetSiguienteCodigoInterno()
         {
             using var db = _factory.CreateDbContext();
             var codigos = db.Clientes.AsNoTracking().Select(c => c.Codigo).ToList();
             return CodigoGenerator.SiguienteAgrupado("CLI", codigos, "CLI-001");
         }
 
-        public bool CodigoExiste(string codigo)
+        private bool CodigoExisteInterno(string codigo)
         {
             using var db = _factory.CreateDbContext();
             return db.Clientes.AsNoTracking().Any(c => c.Codigo == codigo);
         }
 
-        public bool TelefonoExiste(string telefono)
+        private bool TelefonoExisteInterno(string telefono)
         {
             using var db = _factory.CreateDbContext();
             return db.Clientes.AsNoTracking().Any(c => c.Telefono == telefono);
@@ -131,7 +143,7 @@ namespace Nuevo_Proyecto.Services
             return null;  // Todas las validaciones pasaron
         }
 
-        public int Crear(ClienteDto dto)
+        private int CrearInterno(ClienteDto dto)
         {
             using var db = _factory.CreateDbContext();
 
@@ -162,7 +174,7 @@ namespace Nuevo_Proyecto.Services
             return cliente.ClienteId;  // Retorna el ID del cliente recién creado
         }
 
-        public bool Actualizar(string codigo, string nombre, string? telefono, string? direccion, string? nota, string? motivo = null)
+        private bool ActualizarInterno(string codigo, string nombre, string? telefono, string? direccion, string? nota, string? motivo)
         {
             using var db = _factory.CreateDbContext();
             var cliente = db.Clientes.FirstOrDefault(c => c.Codigo == codigo);
@@ -192,8 +204,8 @@ namespace Nuevo_Proyecto.Services
             return true;
         }
 
-        public bool Desactivar(string codigo, string? motivo = null) => CambiarEstado(codigo, false, motivo);
-        public bool Reactivar(string codigo, string? motivo = null) => CambiarEstado(codigo, true, motivo);
+        public bool Desactivar(string codigo, string? motivo = null) => ConexionMonitor.Ejecutar(() => CambiarEstado(codigo, false, motivo));
+        public bool Reactivar(string codigo, string? motivo = null) => ConexionMonitor.Ejecutar(() => CambiarEstado(codigo, true, motivo));
 
         private bool CambiarEstado(string codigo, bool activo, string? motivo = null)
         {
@@ -220,7 +232,7 @@ namespace Nuevo_Proyecto.Services
             return true;
         }
 
-        public ClienteDto ObtenerOCrearConsumidorFinal()
+        private ClienteDto ObtenerOCrearConsumidorFinalInterno()
         {
             using var db = _factory.CreateDbContext();
             var cf = BuscarOCrearConsumidorFinal(db);

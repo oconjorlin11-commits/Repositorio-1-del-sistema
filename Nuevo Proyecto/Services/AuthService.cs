@@ -61,7 +61,7 @@ namespace Nuevo_Proyecto.Services
                     INNER JOIN Empleados e ON u.EmpleadoID = e.EmpleadoID
                     WHERE u.NombreUsuario = {usuario}
                       AND u.Activo = 1
-                      AND ISNULL(e.Activo, 1) = 1")
+                      AND COALESCE(e.Activo, 1) = 1")
                     .AsEnumerable()
                     .FirstOrDefault();
 

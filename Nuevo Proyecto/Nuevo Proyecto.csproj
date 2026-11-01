@@ -13,10 +13,12 @@
 	<ItemGroup>
 		<PackageReference Include="ClosedXML" Version="0.105.1" />
 		<PackageReference Include="iTextSharp.LGPLv2.Core" Version="3.8.6" />
+		<PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.12" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.12" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.12" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.12">
 			<PrivateAssets>all</PrivateAssets>
@@ -48,6 +50,10 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<!-- Asegurar que los presenters y nuevas interfaces se compilen -->
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Data\sql lite\" />
 	</ItemGroup>
 
 </Project>

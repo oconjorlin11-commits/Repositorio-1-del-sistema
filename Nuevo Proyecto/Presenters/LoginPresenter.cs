@@ -1,4 +1,4 @@
-using Nuevo_Proyecto.Services;
+﻿using Nuevo_Proyecto.Services;
 using Nuevo_Proyecto.Services.Helpers;
 using Nuevo_Proyecto.Services.Interfaz_service;
 using Nuevo_Proyecto.Views.Interfaces;
@@ -39,7 +39,13 @@ namespace Nuevo_Proyecto.Presenters
             }
 
             SesionActual.Iniciar(resultado.Sesion);
+            if (!SesionActual.EsAdministrador)
+            {
+                try { Nuevo_Proyecto.Data.SqlLite.CacheLocal.GuardarUltimoNoAdmin(resultado.Sesion.NombreUsuario); }
+                catch (Exception ex) { System.Diagnostics.Debug.WriteLine(ex.Message); }
+            }
             _view.CompletarLogin();
         }
     }
 }
+
