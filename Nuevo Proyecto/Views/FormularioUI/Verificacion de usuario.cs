@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Nuevo_Proyecto.Services;
 using Nuevo_Proyecto.Services.Interfaz_service;
 using Nuevo_Proyecto.Data;
+using Nuevo_Proyecto.Models.DTOs;
 
 namespace Nuevo_Proyecto.Views.FormularioUI
 {
@@ -25,34 +26,8 @@ namespace Nuevo_Proyecto.Views.FormularioUI
             // Ocultar todos los labels y lineas inicialmente
             OcultarResultados();
 
-            // Configurar eventos de botones
-            var btnVerificar = new Button
-            {
-                Text = "Verificar",
-                Left = 357,
-                Top = 250,
-                Width = 180,
-                Height = 50,
-                BackColor = Color.FromArgb(153, 40, 35),
-                ForeColor = Color.White,
-                Font = new Font("Segoe UI", 11, FontStyle.Bold)
-            };
-
-            var btnCancelar = new Button
-            {
-                Text = "Cancelar",
-                Left = 587,
-                Top = 250,
-                Width = 180,
-                Height = 50,
-                Font = new Font("Segoe UI", 11, FontStyle.Bold)
-            };
-
-            btnVerificar.Click += BtnVerificar_Click;
-            btnCancelar.Click += BtnCancelar_Click;
-
-            this.Controls.Add(btnVerificar);
-            this.Controls.Add(btnCancelar);
+            // Conectar evento del botón Verificar del Designer
+            BtnVerificar.Click += BtnVerificar_Click;
         }
 
         private void OcultarResultados()
@@ -105,25 +80,20 @@ namespace Nuevo_Proyecto.Views.FormularioUI
             label6.ForeColor = Color.Green;
         }
 
-        private void MostrarErrorBusqueda()
+        private void MostrarErrorBusqueda(string mensaje)
         {
             // Ocultar todo excepto el label de verificacion
             OcultarResultados();
 
             // Mostrar solo el label de verificacion en rojo
             LblVerificacion.Visible = true;
-            LblVerificacion.Text = "No se encontro el usuario";
+            LblVerificacion.Text = mensaje;
             LblVerificacion.ForeColor = Color.Red;
         }
 
         private async void BtnVerificar_Click(object? sender, EventArgs e)
         {
             await BuscarUsuarioAsync();
-        }
-
-        private void BtnCancelar_Click(object? sender, EventArgs e)
-        {
-            this.Close();
         }
 
         private async Task BuscarUsuarioAsync()
@@ -140,7 +110,7 @@ namespace Nuevo_Proyecto.Views.FormularioUI
 
                 if (string.IsNullOrWhiteSpace(TxtContraseñaEspecial.Text))
                 {
-                    MessageBox.Show("Por favor, ingrese la Contrasena.", "Campo Obligatorio", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Por favor, ingrese la Contraseña.", "Campo Obligatorio", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     TxtContraseñaEspecial.Focus();
                     return;
                 }
@@ -150,20 +120,28 @@ namespace Nuevo_Proyecto.Views.FormularioUI
 
                 if (!resultadoAuth.Exitoso || resultadoAuth.Sesion == null)
                 {
-                    MostrarErrorBusqueda();
+                    MostrarErrorBusqueda("No se encontró el usuario o credenciales incorrectas");
                     return;
                 }
 
-                // Usuario encontrado y autenticado correctamente
-                LblRespUsuario.Text = resultadoAuth.Sesion.NombreUsuario ?? "N/A";
+                // ✅ VERIFICACIÓN CRÍTICA: El usuario debe ser ADMINISTRADOR
+                if (!EsUsuarioAdministrador(resultadoAuth.Sesion))
+                {
+                    MostrarErrorBusqueda($"Error: {resultadoAuth.Sesion.NombreUsuario} no tiene permisos de administrador.\nSolo administradores pueden autorizar acceso temporal.");
+                    return;
+                }
 
-                // 👉 Guardar el nombre del admin verificado
-                AdminNombreVerificado = resultadoAuth.Sesion.NombreEmpleado ?? resultadoAuth.Sesion.NombreUsuario ?? "Desconocido";
+                // ✅ Usuario encontrado, autenticado y es ADMINISTRADOR
+                LblRespUsuario.Text = resultadoAuth.Sesion.NombreUsuario ?? "N/A";
+                LblverUsuario.Text = $"Usuario Verificado: {resultadoAuth.Sesion.NombreEmpleado}";
+
+                // Guardar el nombre del admin verificado (incluyendo su Cargo)
+                AdminNombreVerificado = $"{resultadoAuth.Sesion.NombreEmpleado} ({resultadoAuth.Sesion.Cargo})";
 
                 // Mostrar resultados en verde
                 MostrarResultadosExitosos();
 
-                // Cerrar el diálogo con resultado OK después de un breve tiempo para que el usuario vea el resultado exitoso
+                // Cerrar el diálogo con resultado OK después de un breve tiempo
                 await Task.Delay(1500);
                 this.DialogResult = DialogResult.OK;
                 this.Close();
@@ -173,6 +151,25 @@ namespace Nuevo_Proyecto.Views.FormularioUI
                 MessageBox.Show("Error: " + ex.Message, "Error del Sistema", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 OcultarResultados();
             }
+        }
+
+        /// <summary>
+        /// Verifica si un usuario tiene permisos de administrador.
+        /// Un usuario es admin si su Rol o Cargo contienen "admin" (case-insensitive).
+        /// </summary>
+        private static bool EsUsuarioAdministrador(SesionUsuarioDto usuario)
+        {
+            if (usuario == null)
+                return false;
+
+            // Verificar si es administrador por Rol o por Cargo
+            bool esAdminPorRol = !string.IsNullOrEmpty(usuario.Rol) && 
+                                 usuario.Rol.Contains("admin", StringComparison.OrdinalIgnoreCase);
+
+            bool esAdminPorCargo = !string.IsNullOrEmpty(usuario.Cargo) && 
+                                   usuario.Cargo.Contains("admin", StringComparison.OrdinalIgnoreCase);
+
+            return esAdminPorRol || esAdminPorCargo;
         }
 
         private void label2_Click(object sender, EventArgs e)

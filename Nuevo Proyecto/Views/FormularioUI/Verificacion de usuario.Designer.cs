@@ -43,6 +43,7 @@
             LblLineas1 = new Label();
             LblverUsuario = new Label();
             LblVerificacion = new Label();
+            BtnVerificar = new Button();
             GbVerificacion.SuspendLayout();
             SuspendLayout();
             // 
@@ -50,10 +51,9 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI Black", 13.8F, FontStyle.Bold | FontStyle.Italic);
-            label1.Location = new Point(179, 28);
-            label1.Margin = new Padding(2, 0, 2, 0);
+            label1.Location = new Point(291, 45);
             label1.Name = "label1";
-            label1.Size = new Size(196, 31);
+            label1.Size = new Size(316, 50);
             label1.TabIndex = 0;
             label1.Text = "Inicio de Session";
             // 
@@ -61,10 +61,9 @@
             // 
             lblUsuarioAdmin.AutoSize = true;
             lblUsuarioAdmin.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-            lblUsuarioAdmin.Location = new Point(59, 160);
-            lblUsuarioAdmin.Margin = new Padding(2, 0, 2, 0);
+            lblUsuarioAdmin.Location = new Point(96, 256);
             lblUsuarioAdmin.Name = "lblUsuarioAdmin";
-            lblUsuarioAdmin.Size = new Size(86, 28);
+            lblUsuarioAdmin.Size = new Size(140, 45);
             lblUsuarioAdmin.TabIndex = 1;
             lblUsuarioAdmin.Text = "Usuario:";
             // 
@@ -72,10 +71,9 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-            label3.Location = new Point(59, 220);
-            label3.Margin = new Padding(2, 0, 2, 0);
+            label3.Location = new Point(96, 352);
             label3.Name = "label3";
-            label3.Size = new Size(119, 28);
+            label3.Size = new Size(194, 45);
             label3.TabIndex = 2;
             label3.Text = "Contraseña:";
             // 
@@ -83,22 +81,20 @@
             // 
             TxtUsuarioEspecial.Font = new Font("Segoe UI", 10.8F, FontStyle.Italic);
             TxtUsuarioEspecial.ForeColor = Color.FromArgb(38, 38, 38);
-            TxtUsuarioEspecial.Location = new Point(210, 157);
-            TxtUsuarioEspecial.Margin = new Padding(2);
+            TxtUsuarioEspecial.Location = new Point(341, 251);
             TxtUsuarioEspecial.Name = "TxtUsuarioEspecial";
             TxtUsuarioEspecial.PlaceholderText = "Usuario";
-            TxtUsuarioEspecial.Size = new Size(254, 31);
+            TxtUsuarioEspecial.Size = new Size(410, 46);
             TxtUsuarioEspecial.TabIndex = 3;
             // 
             // TxtContraseñaEspecial
             // 
             TxtContraseñaEspecial.Font = new Font("Segoe UI", 10.8F, FontStyle.Italic);
             TxtContraseñaEspecial.ForeColor = Color.FromArgb(38, 38, 38);
-            TxtContraseñaEspecial.Location = new Point(210, 217);
-            TxtContraseñaEspecial.Margin = new Padding(2);
+            TxtContraseñaEspecial.Location = new Point(341, 347);
             TxtContraseñaEspecial.Name = "TxtContraseñaEspecial";
             TxtContraseñaEspecial.PlaceholderText = "Contraseña";
-            TxtContraseñaEspecial.Size = new Size(254, 31);
+            TxtContraseñaEspecial.Size = new Size(410, 46);
             TxtContraseñaEspecial.TabIndex = 4;
             // 
             // GbVerificacion
@@ -115,11 +111,9 @@
             GbVerificacion.Controls.Add(LblVerificacion);
             GbVerificacion.Font = new Font("Segoe UI", 10.8F, FontStyle.Italic);
             GbVerificacion.ForeColor = Color.FromArgb(38, 38, 38);
-            GbVerificacion.Location = new Point(11, 388);
-            GbVerificacion.Margin = new Padding(2);
+            GbVerificacion.Location = new Point(18, 621);
             GbVerificacion.Name = "GbVerificacion";
-            GbVerificacion.Padding = new Padding(2);
-            GbVerificacion.Size = new Size(519, 248);
+            GbVerificacion.Size = new Size(843, 397);
             GbVerificacion.TabIndex = 7;
             GbVerificacion.TabStop = false;
             GbVerificacion.Enter += GbVerificacion_Enter;
@@ -127,99 +121,100 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(237, 78);
-            label4.Margin = new Padding(2, 0, 2, 0);
+            label4.Location = new Point(385, 125);
             label4.Name = "label4";
-            label4.Size = new Size(16, 175);
+            label4.Size = new Size(24, 280);
             label4.TabIndex = 21;
             label4.Text = "|\r\n|\r\n|\r\n|\r\n|\r\n|\r\n|\r\n";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(15, 22);
-            label2.Margin = new Padding(2, 0, 2, 0);
+            label2.Location = new Point(24, 35);
             label2.Name = "label2";
-            label2.Size = new Size(16, 250);
+            label2.Size = new Size(24, 400);
             label2.TabIndex = 20;
             label2.Text = "|\r\n|\r\n|\r\n|\r\n|\r\n|\r\n|\r\n|\r\n|\r\n|\r\n";
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(57, 143);
-            label6.Margin = new Padding(2, 0, 2, 0);
+            label6.Location = new Point(93, 229);
             label6.Name = "label6";
-            label6.Size = new Size(453, 25);
+            label6.Size = new Size(773, 40);
             label6.TabIndex = 16;
             label6.Text = "---------------------------------------------------------------";
             // 
             // LblLineas4
             // 
             LblLineas4.AutoSize = true;
-            LblLineas4.Location = new Point(503, 22);
-            LblLineas4.Margin = new Padding(2, 0, 2, 0);
+            LblLineas4.Location = new Point(817, 35);
             LblLineas4.Name = "LblLineas4";
-            LblLineas4.Size = new Size(16, 250);
+            LblLineas4.Size = new Size(24, 400);
             LblLineas4.TabIndex = 13;
             LblLineas4.Text = "|\r\n|\r\n|\r\n|\r\n|\r\n|\r\n|\r\n|\r\n|\r\n|\r\n";
             // 
             // LblLineas3
             // 
             LblLineas3.AutoSize = true;
-            LblLineas3.Location = new Point(15, 222);
-            LblLineas3.Margin = new Padding(2, 0, 2, 0);
+            LblLineas3.Location = new Point(24, 355);
             LblLineas3.Name = "LblLineas3";
-            LblLineas3.Size = new Size(579, 25);
+            LblLineas3.Size = new Size(989, 40);
             LblLineas3.TabIndex = 11;
             LblLineas3.Text = "---------------------------------------------------------------------------------";
             // 
             // LblRespUsuario
             // 
             LblRespUsuario.AutoSize = true;
-            LblRespUsuario.Location = new Point(257, 106);
-            LblRespUsuario.Margin = new Padding(2, 0, 2, 0);
+            LblRespUsuario.Location = new Point(418, 170);
             LblRespUsuario.Name = "LblRespUsuario";
-            LblRespUsuario.Size = new Size(154, 25);
+            LblRespUsuario.Size = new Size(245, 40);
             LblRespUsuario.TabIndex = 9;
             LblRespUsuario.Text = "Resultado Usuario";
             // 
             // LblLineas1
             // 
             LblLineas1.AutoSize = true;
-            LblLineas1.Location = new Point(15, 9);
-            LblLineas1.Margin = new Padding(2, 0, 2, 0);
+            LblLineas1.Location = new Point(24, 14);
             LblLineas1.Name = "LblLineas1";
-            LblLineas1.Size = new Size(579, 25);
+            LblLineas1.Size = new Size(989, 40);
             LblLineas1.TabIndex = 5;
             LblLineas1.Text = "---------------------------------------------------------------------------------";
             // 
             // LblverUsuario
             // 
             LblverUsuario.AutoSize = true;
-            LblverUsuario.Location = new Point(135, 106);
-            LblverUsuario.Margin = new Padding(2, 0, 2, 0);
+            LblverUsuario.Location = new Point(104, 170);
             LblverUsuario.Name = "LblverUsuario";
-            LblverUsuario.Size = new Size(72, 25);
+            LblverUsuario.Size = new Size(114, 40);
             LblverUsuario.TabIndex = 3;
             LblverUsuario.Text = "Usuario";
             // 
             // LblVerificacion
             // 
             LblVerificacion.AutoSize = true;
-            LblVerificacion.Location = new Point(199, 40);
-            LblVerificacion.Margin = new Padding(2, 0, 2, 0);
+            LblVerificacion.Location = new Point(323, 64);
             LblVerificacion.Name = "LblVerificacion";
-            LblVerificacion.Size = new Size(104, 25);
+            LblVerificacion.Size = new Size(166, 40);
             LblVerificacion.TabIndex = 0;
             LblVerificacion.Text = "Verificacion";
             // 
+            // BtnVerificar
+            // 
+            BtnVerificar.Location = new Point(601, 453);
+            BtnVerificar.Name = "BtnVerificar";
+            BtnVerificar.Size = new Size(150, 46);
+            BtnVerificar.TabIndex = 8;
+            BtnVerificar.Text = "Verificar";
+            BtnVerificar.UseVisualStyleBackColor = true;
+            // 
             // Verificacion_de_usuario
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(232, 221, 206);
-            ClientSize = new Size(541, 659);
+            ClientSize = new Size(879, 1054);
+            Controls.Add(BtnVerificar);
             Controls.Add(GbVerificacion);
             Controls.Add(TxtContraseñaEspecial);
             Controls.Add(TxtUsuarioEspecial);
@@ -227,7 +222,6 @@
             Controls.Add(lblUsuarioAdmin);
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
-            Margin = new Padding(2);
             Name = "Verificacion_de_usuario";
             Text = "Verificacion_de_usuario";
             Load += Verificacion_de_usuario_Load;
@@ -254,5 +248,6 @@
         private Label LblVerificacion;
         private Label label4;
         private Label label2;
+        private Button BtnVerificar;
     }
 }
