@@ -1,4 +1,4 @@
-using System.Data;
+﻿using System.Data;
 using Nuevo_Proyecto.Models.DTOs;
 using Nuevo_Proyecto.Services;
 using Nuevo_Proyecto.Services.Interfaz_service;
@@ -21,9 +21,9 @@ namespace Nuevo_Proyecto.Presenters
                                     IProductoRepository? productos = null)
         {
             _view = view;   // opcional: el dashboard solo usa las consultas
-            _facturas = facturas ?? new FacturaRepository();
-            _catalogos = catalogos ?? new CatalogoRepository();
-            _productos = productos ?? new ProductoRepository();
+            _facturas = facturas ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IFacturaRepository>(new FacturaRepository());
+            _catalogos = catalogos ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.ICatalogoRepository>(new CatalogoRepository());
+            _productos = productos ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IProductoRepository>(new ProductoRepository());
         }
 
         public FacturacionPresenter(IFacturasEmitidasView view,
@@ -32,9 +32,9 @@ namespace Nuevo_Proyecto.Presenters
                                     IProductoRepository? productos = null)
         {
             _facturasEmitidasView = view ?? throw new ArgumentNullException(nameof(view));
-            _facturas = facturas ?? new FacturaRepository();
-            _catalogos = catalogos ?? new CatalogoRepository();
-            _productos = productos ?? new ProductoRepository();
+            _facturas = facturas ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IFacturaRepository>(new FacturaRepository());
+            _catalogos = catalogos ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.ICatalogoRepository>(new CatalogoRepository());
+            _productos = productos ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IProductoRepository>(new ProductoRepository());
         }
 
         public FacturacionPresenter(IComprobanteView view,
@@ -43,9 +43,9 @@ namespace Nuevo_Proyecto.Presenters
                                     IProductoRepository? productos = null)
         {
             _comprobanteView = view ?? throw new ArgumentNullException(nameof(view));
-            _facturas = facturas ?? new FacturaRepository();
-            _catalogos = catalogos ?? new CatalogoRepository();
-            _productos = productos ?? new ProductoRepository();
+            _facturas = facturas ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IFacturaRepository>(new FacturaRepository());
+            _catalogos = catalogos ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.ICatalogoRepository>(new CatalogoRepository());
+            _productos = productos ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IProductoRepository>(new ProductoRepository());
         }
 
         // ---------------------------------------------------------------- consultas de facturas
@@ -105,3 +105,4 @@ namespace Nuevo_Proyecto.Presenters
             _facturas.Anular(numero, Services.Helpers.SesionActual.EmpleadoORespaldo(0), motivo);
     }
 }
+

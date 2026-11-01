@@ -6,6 +6,7 @@ namespace Nuevo_Proyecto.Services.Interfaz_service
     {
         IReadOnlyList<ClienteDto> GetActivos();
         IReadOnlyList<ClienteDto> BuscarPorCodigo(string prefijoCodigo);
+        IReadOnlyList<ClienteDto> BuscarPorCodigoONombre(string termino);
         IReadOnlyList<string> GetNotas();
         string GetSiguienteCodigo();
         bool CodigoExiste(string codigo);

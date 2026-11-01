@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -34,7 +34,7 @@ namespace Nuevo_Proyecto.Presenters
         public EmpleadoPresenter(IEmpleadoView view, IEmpleadoRepository? empleados = null, IUsuarioRepository? usuarios = null)
         {
             _view = view ?? throw new ArgumentNullException(nameof(view));
-            _empleados = empleados ?? new EmpleadoRepository();
+            _empleados = empleados ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IEmpleadoRepository>(new EmpleadoRepository());
             _usuarios = usuarios ?? new UsuarioRepository();
 
             _view.EditarClicked += OnEditarClicked;
@@ -46,7 +46,7 @@ namespace Nuevo_Proyecto.Presenters
         public EmpleadoPresenter(INuevoEmpleadoView nuevoEmpleadoView, IEmpleadoRepository? empleados = null, IUsuarioRepository? usuarios = null)
         {
             _nuevoEmpleadoView = nuevoEmpleadoView ?? throw new ArgumentNullException(nameof(nuevoEmpleadoView));
-            _empleados = empleados ?? new EmpleadoRepository();
+            _empleados = empleados ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IEmpleadoRepository>(new EmpleadoRepository());
             _usuarios = usuarios ?? new UsuarioRepository();
 
             _nuevoEmpleadoView.GuardarClicked += OnGuardarNuevoEmpleadoClicked;
@@ -56,7 +56,7 @@ namespace Nuevo_Proyecto.Presenters
         // Constructor genérico para consultas/tests
         public EmpleadoPresenter(IEmpleadoRepository? empleados = null)
         {
-            _empleados = empleados ?? new EmpleadoRepository();
+            _empleados = empleados ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IEmpleadoRepository>(new EmpleadoRepository());
         }
 
         // ---------------------------------------------------------------- control de la vista
@@ -520,4 +520,5 @@ namespace Nuevo_Proyecto.Presenters
         }
     }
 }
+
 

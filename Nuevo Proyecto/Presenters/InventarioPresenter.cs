@@ -1,4 +1,4 @@
-using System.Data;
+﻿using System.Data;
 using System.Linq;
 using Nuevo_Proyecto.Services;
 using Nuevo_Proyecto.Services.Helpers;
@@ -20,9 +20,9 @@ namespace Nuevo_Proyecto.Presenters
                                    IEmpleadoRepository? empleados = null)
         {
             _view = view;   // opcional: el dashboard y Reportes solo consultan
-            _inventario = inventario ?? new InventarioRepository();
-            _catalogos = catalogos ?? new CatalogoRepository();
-            _empleados = empleados ?? new EmpleadoRepository();
+            _inventario = inventario ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IInventarioRepository>(new InventarioRepository());
+            _catalogos = catalogos ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.ICatalogoRepository>(new CatalogoRepository());
+            _empleados = empleados ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IEmpleadoRepository>(new EmpleadoRepository());
 
             if (_view != null)
             {
@@ -135,4 +135,5 @@ namespace Nuevo_Proyecto.Presenters
         }
     }
 }
+
 

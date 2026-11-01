@@ -52,8 +52,4 @@
 		<!-- Asegurar que los presenters y nuevas interfaces se compilen -->
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Data\sql lite\" />
-	</ItemGroup>
-
 </Project>

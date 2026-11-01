@@ -36,6 +36,7 @@ namespace Nuevo_Proyecto.Services
 
         public IReadOnlyList<ClienteDto> GetActivos() => ConexionMonitor.Ejecutar(GetActivosInterno);
         public IReadOnlyList<ClienteDto> BuscarPorCodigo(string codigoExacto) => ConexionMonitor.Ejecutar(() => BuscarPorCodigoInterno(codigoExacto));
+        public IReadOnlyList<ClienteDto> BuscarPorCodigoONombre(string termino) => ConexionMonitor.Ejecutar(() => BuscarPorCodigoONombreInterno(termino));
         public IReadOnlyList<string> GetNotas() => ConexionMonitor.Ejecutar(GetNotasInterno);
         public string GetSiguienteCodigo() => ConexionMonitor.Ejecutar(GetSiguienteCodigoInterno);
         public bool CodigoExiste(string codigo) => ConexionMonitor.Ejecutar(() => CodigoExisteInterno(codigo));
@@ -60,6 +61,18 @@ namespace Nuevo_Proyecto.Services
             using var db = _factory.CreateDbContext();
             return db.Clientes.AsNoTracking()
                 .Where(c => c.Codigo == codigoExacto)
+                .OrderBy(c => c.Codigo)
+                .Select(ADto)
+                .ToList();
+        }
+
+        private IReadOnlyList<ClienteDto> BuscarPorCodigoONombreInterno(string termino)
+        {
+            using var db = _factory.CreateDbContext();
+            string t = termino.Trim().ToUpper();
+            return db.Clientes.AsNoTracking()
+                .Where(c => c.Codigo != CodigoConsumidorFinal &&
+                            (c.Codigo.ToUpper().Contains(t) || c.Nombre.ToUpper().Contains(t)))
                 .OrderBy(c => c.Codigo)
                 .Select(ADto)
                 .ToList();

@@ -129,6 +129,20 @@ namespace Nuevo_Proyecto.Models.Views
             txtPrecioVentas.Text = string.Empty;
             txtStock.Text = string.Empty;
             txtMinimo.Text = string.Empty;
+            ResetearOriginales();
+        }
+
+        private void ResetearOriginales()
+        {
+            CodigoOriginal = string.Empty;
+            ProductoIDOriginal = 0;
+            NombreOriginal = string.Empty;
+            CategoriaOriginalID = 0;
+            UnidadOriginalID = 0;
+            PrecioVentaOriginal = 0;
+            StockOriginal = 0;
+            StockMinimoOriginal = 0;
+            EstadoOriginal = false;
         }
 
         public void MostrarInventario(DataTable dt)
@@ -262,6 +276,8 @@ namespace Nuevo_Proyecto.Models.Views
 
         private void LimpiarDespuesDeAccion()
         {
+            HayMultiplesResultados = false;
+
             // Limpiar campos de texto
             txtCodigoInvent.Text = string.Empty;
             txtProductosInven.Text = string.Empty;
@@ -414,7 +430,7 @@ namespace Nuevo_Proyecto.Models.Views
         private void btnEditarInventar_Click(object sender, EventArgs e)
         {
             //  Paso 1: verificar si hay producto cargado
-            if (ProductoIDOriginal == 0 || string.IsNullOrEmpty(CodigoOriginal))
+            if (string.IsNullOrWhiteSpace(BuscarTexto) || ProductoIDOriginal == 0 || string.IsNullOrEmpty(CodigoOriginal))
             {
                 MessageBox.Show("Debe buscar primero un producto.");
                 return;
@@ -724,13 +740,13 @@ namespace Nuevo_Proyecto.Models.Views
         private void btnEliminarInvent_Click(object sender, EventArgs e)
         {
             //  Paso 1: verificar si hay producto cargado
-            if (ProductoIDOriginal == 0 || string.IsNullOrEmpty(CodigoOriginal))
+            if (string.IsNullOrWhiteSpace(BuscarTexto) || ProductoIDOriginal == 0 || string.IsNullOrEmpty(CodigoOriginal))
             {
                 MessageBox.Show("Debe buscar primero un producto.");
                 return;
             }
 
-            //  Paso 2: Confirmación inicial antes de mostrar formulario
+            //  Paso 2: Confirmación inicial
             DialogResult confirmDialog = MessageBox.Show(
                 $"¿Desea dar de baja permanentemente el producto:\n\n" +
                 $"Código: {CodigoOriginal}\n" +

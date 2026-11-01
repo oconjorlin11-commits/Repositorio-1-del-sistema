@@ -1,4 +1,4 @@
-using System.Data;
+﻿using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Nuevo_Proyecto.Models.DTOs;
 using Nuevo_Proyecto.Services;
@@ -29,9 +29,9 @@ namespace Nuevo_Proyecto.Presenters
                                   IEmpleadoRepository? empleados = null)
         {
             _view = view ?? throw new ArgumentNullException(nameof(view));
-            _productos = productos ?? new ProductoRepository();
-            _catalogos = catalogos ?? new CatalogoRepository();
-            _empleados = empleados ?? new EmpleadoRepository();
+            _productos = productos ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IProductoRepository>(new ProductoRepository());
+            _catalogos = catalogos ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.ICatalogoRepository>(new CatalogoRepository());
+            _empleados = empleados ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IEmpleadoRepository>(new EmpleadoRepository());
 
             _view.GuardarClicked += OnGuardarClicked;
             _view.CancelarClicked += OnCancelarClicked;
@@ -159,3 +159,4 @@ namespace Nuevo_Proyecto.Presenters
         }
     }
 }
+

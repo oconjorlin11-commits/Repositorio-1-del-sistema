@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -38,8 +38,8 @@ namespace Nuevo_Proyecto.Presenters
                                 IEmpleadoRepository? empleados = null)
         {
             _view = view ?? throw new ArgumentNullException(nameof(view));
-            _clientes = clientes ?? new ClienteRepository();
-            _empleados = empleados ?? new EmpleadoRepository();
+            _clientes = clientes ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IClienteRepository>(new ClienteRepository());
+            _empleados = empleados ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IEmpleadoRepository>(new EmpleadoRepository());
 
             _view.EditarClicked += OnEditarClicked;
             _view.EliminarClicked += OnEliminarClicked;
@@ -52,8 +52,8 @@ namespace Nuevo_Proyecto.Presenters
                                 IEmpleadoRepository? empleados = null)
         {
             _nuevoClienteView = nuevoClienteView ?? throw new ArgumentNullException(nameof(nuevoClienteView));
-            _clientes = clientes ?? new ClienteRepository();
-            _empleados = empleados ?? new EmpleadoRepository();
+            _clientes = clientes ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IClienteRepository>(new ClienteRepository());
+            _empleados = empleados ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IEmpleadoRepository>(new EmpleadoRepository());
 
             _nuevoClienteView.GuardarClicked += OnGuardarNuevoClienteClicked;
             _nuevoClienteView.CancelarClicked += OnCancelarNuevoClienteClicked;
@@ -63,8 +63,8 @@ namespace Nuevo_Proyecto.Presenters
         public ClientePresenter(IClienteRepository? clientes = null,
                                 IEmpleadoRepository? empleados = null)
         {
-            _clientes = clientes ?? new ClienteRepository();
-            _empleados = empleados ?? new EmpleadoRepository();
+            _clientes = clientes ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IClienteRepository>(new ClienteRepository());
+            _empleados = empleados ?? Nuevo_Proyecto.Data.SqlLite.Resiliente.Envolver<Nuevo_Proyecto.Services.Interfaz_service.IEmpleadoRepository>(new EmpleadoRepository());
         }
 
         // ---------------------------------------------------------------- control de la vista
@@ -499,11 +499,11 @@ namespace Nuevo_Proyecto.Presenters
                 return;
             }
 
-            // Buscar código EXACTO en activos e inactivos
-            var resultados = _clientes.BuscarPorCodigo(codigo);
+            // Buscar por código o nombre (parcial) en activos e inactivos
+            var resultados = _clientes.BuscarPorCodigoONombre(codigo);
             var dt = DataTableMapper.Clientes(resultados);
 
-            if (dt.Rows.Count > 0)
+            if (dt.Rows.Count == 1)
             {
                 // Mostrar resultado exacto encontrado
                 _view.MostrarClientes(dt);
@@ -521,11 +521,12 @@ namespace Nuevo_Proyecto.Presenters
             }
             else
             {
-                // Si no hay resultado exacto, mostrar solo los activos
-                CargarClientesActivos();
+                // Varias coincidencias o ninguna: se muestran y no se carga nada para editar/eliminar
+                _view.MostrarClientes(dt);
                 LimpiarCampos();
             }
         }
     }
 }
+
 
