@@ -250,48 +250,12 @@ namespace Nuevo_Proyecto.Models.Views
             string codigo = Codigo.Trim();
             if (string.IsNullOrWhiteSpace(codigo))
             {
-                MessageBox.Show("Debe ingresar un código de empleado a editar.", "Código requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Debe seleccionar un empleado a editar.", "Código requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Validar cambios
-            if (Nombre.Trim() == _nombreEmpleadoOriginal &&
-                Cargo == string.Empty &&
-                Cedula == string.Empty &&
-                Telefono == string.Empty &&
-                Salario == 0)
-            {
-                MessageBox.Show("No hay cambios para guardar.", "Sin cambios", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-            try
-            {
-                bool resultado = _empleadoRepository.Actualizar(
-                    codigo,
-                    Nombre.Trim(),
-                    Cargo,
-                    Cedula.Trim(),
-                    Telefono,
-                    Salario
-                );
-
-                if (resultado)
-                {
-                    MessageBox.Show("Actualizado correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    BuscarTexto = string.Empty;  // Limpiar búsqueda
-                    ResetFields();               // Limpiar campos
-                    _presenter.CargarEmpleadosActivos();  // Recargar lista
-                }
-                else
-                {
-                    MessageBox.Show("No se pudo actualizar el empleado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al actualizar: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            // Disparar evento al presentador para que valide cambios y actualice
+            EditarClicked?.Invoke(this, EventArgs.Empty);
         }
 
         private void btnEliminarEmpl_Click(object sender, EventArgs e)
@@ -311,41 +275,12 @@ namespace Nuevo_Proyecto.Models.Views
             string codigo = Codigo.Trim();
             if (string.IsNullOrWhiteSpace(codigo))
             {
-                MessageBox.Show("Debe ingresar un código de empleado a despedir.", "Código requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Debe seleccionar un empleado a despedir.", "Código requerido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Confirmación previa
-            DialogResult conf = MessageBox.Show(
-                $"¿Está seguro de que desea despedir al empleado {_nombreEmpleadoOriginal}?",
-                "Confirmar despido",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question
-            );
-
-            if (conf != DialogResult.Yes)
-                return;
-
-            try
-            {
-                bool resultado = _empleadoRepository.Desactivar(codigo);
-
-                if (resultado)
-                {
-                    MessageBox.Show("Empleado despedido correctamente.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    BuscarTexto = string.Empty;  // Limpiar búsqueda
-                    ResetFields();               // Limpiar campos
-                    _presenter.CargarEmpleadosActivos();  // Recargar lista
-                }
-                else
-                {
-                    MessageBox.Show("No se pudo despedir al empleado.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error al despedir: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            // Disparar evento al presentador para que valide y elimine
+            EliminarClicked?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>

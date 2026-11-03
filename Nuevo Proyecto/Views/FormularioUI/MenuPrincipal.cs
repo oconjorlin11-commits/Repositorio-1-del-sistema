@@ -156,17 +156,25 @@ namespace Nuevo_Proyecto.Models.Views
 
         private void btnSalir_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show(
-          "¿Desea salir del sistema?",
-           "Confirmar salida",
-           MessageBoxButtons.YesNo,
-           MessageBoxIcon.Question
-  );
-
-            if (result == DialogResult.Yes)
+            // Mostrar diálogo personalizado con opciones de cerrar sesión o salir del sistema
+            using (var dlgConfirmacion = new Salir())
             {
-                SesionActual.Cerrar();
-                Application.Exit();
+                DialogResult result = dlgConfirmacion.ShowDialog(this);
+
+                if (result == DialogResult.Yes)
+                {
+                    // Cerrar sesión: limpiar sesión y volver al login
+                    SesionActual.Cerrar();
+                    this.Close();  // Cerrar MenuPrincipal (no Application.Exit)
+                    // El flujo volverá a Program.Main que mostrará InicioSesion nuevamente
+                }
+                else if (result == DialogResult.No)
+                {
+                    // Salir del sistema: limpiar sesión y terminar aplicación
+                    SesionActual.Cerrar();
+                    Application.Exit();
+                }
+                // Si es Cancel, no hacer nada (seguir en el menú)
             }
         }
     }

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Windows.Forms;
 using Microsoft.EntityFrameworkCore;
 using Nuevo_Proyecto.Models.DTOs;
 using Nuevo_Proyecto.Services;
+using Nuevo_Proyecto.Services.Helpers;
 using Nuevo_Proyecto.Services.Interfaz_service;
 using Nuevo_Proyecto.Views.Interfaces;
 
@@ -394,6 +396,24 @@ namespace Nuevo_Proyecto.Presenters
                 _view.showMessage("Debe seleccionar un empleado primero.", "Aviso", true);
                 return;
             }
+
+            // Validar que solo administradores pueden eliminar empleados
+            if (!SesionActual.EsAdministrador)
+            {
+                _view.showMessage("Solo administradores pueden despedir empleados.", "Acceso denegado", true);
+                return;
+            }
+
+            // Confirmación antes de despedir
+            System.Windows.Forms.DialogResult conf = System.Windows.Forms.MessageBox.Show(
+                $"¿Está seguro de que desea despedir al empleado {_nombreOriginal}?",
+                "Confirmar despido",
+                System.Windows.Forms.MessageBoxButtons.YesNo,
+                System.Windows.Forms.MessageBoxIcon.Question
+            );
+
+            if (conf != System.Windows.Forms.DialogResult.Yes)
+                return;
 
             bool ok = _empleados.Desactivar(_codigoOriginal);
             if (ok)

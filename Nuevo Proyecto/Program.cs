@@ -33,18 +33,31 @@ namespace Nuevo_Proyecto
             };
             ConexionMonitor.Iniciar();
 
-            // Mostrar InicioSesion como diálogo modal
-            using (var inicioSesion = new InicioSesion())
+            // Loop para permitir múltiples intentos de login y reapertura de menú tras cerrar sesión
+            bool continuarAplicacion = true;
+            while (continuarAplicacion)
             {
-                if (inicioSesion.ShowDialog() == DialogResult.OK && SesionActual.HaySesion)
+                // Mostrar InicioSesion como diálogo modal
+                using (var inicioSesion = new InicioSesion())
                 {
-                    // Si login fue exitoso y hay sesión, verificar stock crítico
-                    VerificarYMostrarAvisoStockCritico();
+                    if (inicioSesion.ShowDialog() == DialogResult.OK && SesionActual.HaySesion)
+                    {
+                        // Si login fue exitoso y hay sesión, verificar stock crítico
+                        VerificarYMostrarAvisoStockCritico();
 
-                    // Abrir MenuPrincipal
-                    Application.Run(new MenuPrincipal());
+                        // Abrir MenuPrincipal
+                        using (var menuPrincipal = new MenuPrincipal())
+                        {
+                            Application.Run(menuPrincipal);
+                        }
+                        // Después de cerrar MenuPrincipal, el loop continúa y vuelve al login
+                    }
+                    else
+                    {
+                        // Si no hubo login exitoso (Cancel o error), terminar aplicación
+                        continuarAplicacion = false;
+                    }
                 }
-                // Si no hubo login exitoso, la aplicación se cierra
             }
         }
 
