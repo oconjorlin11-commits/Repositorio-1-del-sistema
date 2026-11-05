@@ -261,23 +261,20 @@ namespace Nuevo_Proyecto.Data.SqlLite
             fallidos = 0;
             AsegurarTabla();
 
-            var lista = new List<(long Id, string Datos)>();
-            using (var c = new SqliteConnection(CacheLocal.CadenaConexion))
-            {
-                c.Open();
-                using var cmd = c.CreateCommand();
-                cmd.CommandText = $"SELECT Id, Datos FROM \"{Tabla}\" ORDER BY Id";
-                using var r = cmd.ExecuteReader();
-                while (r.Read()) lista.Add((r.GetInt64(0), r.GetString(1)));
-            }
-            if (lista.Count == 0) return true;
+            if (SiguientePendiente() == null) return true;
 
             using var origen = new SqlConnection(cadenaSqlServer);
             origen.Open();
             var mapa = new Dictionary<(string, long), long>();
 
-            foreach (var (id, datos) in lista)
+            while (true)
             {
+                var siguiente = SiguientePendiente();
+                if (siguiente == null) return true;
+                var (id, datos) = siguiente.Value;
+
+                Marcar(id, "SUBIENDO", null, sumarIntento: true);
+                Thread.Sleep(PausaEntreOperaciones);
                 try
                 {
                     var op = JsonSerializer.Deserialize<OpPendiente>(datos)!;
@@ -286,13 +283,48 @@ namespace Nuevo_Proyecto.Data.SqlLite
                 }
                 catch (Exception ex)
                 {
-                    if (origen.State != ConnectionState.Open) return false;
+                    if (origen.State != ConnectionState.Open)
+                    {
+                        Marcar(id, "PENDIENTE", ex.GetBaseException().Message, sumarIntento: false);
+                        return false;
+                    }
                     fallidos++;
                     RegistrarError(datos, ex);
                 }
                 Borrar(id);
             }
-            return true;
+        }
+
+        /// <summary>Tiempo que cada operación permanece en SUBIENDO antes de enviarse, para ver el FIFO una por una.</summary>
+        public static int PausaEntreOperaciones { get; set; } = 1500;
+
+        /// <summary>Lee solo la operación más antigua (FIFO).</summary>
+        private static (long Id, string Datos)? SiguientePendiente()
+        {
+            using var c = new SqliteConnection(CacheLocal.CadenaConexion);
+            c.Open();
+            using var cmd = c.CreateCommand();
+            cmd.CommandText = $"SELECT Id, Datos FROM \"{Tabla}\" ORDER BY Id LIMIT 1";
+            using var r = cmd.ExecuteReader();
+            return r.Read() ? (r.GetInt64(0), r.GetString(1)) : null;
+        }
+
+        private static void Marcar(long id, string estado, string? error, bool sumarIntento)
+        {
+            try
+            {
+                using var c = new SqliteConnection(CacheLocal.CadenaConexion);
+                c.Open();
+                using var cmd = c.CreateCommand();
+                cmd.CommandText = $"UPDATE \"{Tabla}\" SET Estado = $e, UltimoError = $err, UltimoIntentoUtc = $u, " +
+                                  $"Intentos = Intentos + {(sumarIntento ? 1 : 0)} WHERE Id = $id";
+                cmd.Parameters.AddWithValue("$e", estado);
+                cmd.Parameters.AddWithValue("$err", (object?)error ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("$u", DateTime.UtcNow.ToString("o"));
+                cmd.Parameters.AddWithValue("$id", id);
+                cmd.ExecuteNonQuery();
+            }
+            catch { }
         }
 
         private static void Borrar(long id)
