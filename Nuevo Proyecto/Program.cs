@@ -2,6 +2,7 @@
 using Nuevo_Proyecto.Services.Helpers;
 using Nuevo_Proyecto.Services;
 using Nuevo_Proyecto.Data.SqlLite;
+using Nuevo_Proyecto.Data.DbSqlite;
 using Nuevo_Proyecto.Views.FormularioUI;
 
 namespace Nuevo_Proyecto
@@ -31,6 +32,7 @@ namespace Nuevo_Proyecto
                     MessageBox.Show(e.Exception.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             };
+            SqliteSchemaInitializer.Inicializar();
             ConexionMonitor.Iniciar();
 
             // Loop para permitir múltiples intentos de login y reapertura de menú tras cerrar sesión

@@ -1,3 +1,4 @@
+﻿using Nuevo_Proyecto.Data.SqlLite;
 using Nuevo_Proyecto.Presenters;
 using Nuevo_Proyecto.Views.Interfaces;
 using Nuevo_Proyecto.Views.FormularioUI;
@@ -21,6 +22,9 @@ namespace Nuevo_Proyecto.Models.Views
             txtContraseña.UseSystemPasswordChar = true;  // Ocultar por defecto
 
             AcceptButton = button2;   // Enter = Ingresar
+
+            // Indicador de modo offline
+            this.Load += InicioSesion_Load;
 
             // Event handlers para los botones
             BtnOcultarContraseña.Click += BtnOcultarContraseña_Click;
@@ -78,6 +82,15 @@ namespace Nuevo_Proyecto.Models.Views
             {
                 // El diálogo se encarga de mostrar la contraseña
             }
+        }
+
+        /// <summary>
+        /// Muestra en el título del formulario si se está en modo sin conexión.
+        /// </summary>
+        private void InicioSesion_Load(object sender, EventArgs e)
+        {
+            if (!ConexionMonitor.EnLinea)
+                this.Text += @" (SIN CONEXION - Modo offline)";
         }
 
         private void panel2_Paint(object sender, PaintEventArgs e)

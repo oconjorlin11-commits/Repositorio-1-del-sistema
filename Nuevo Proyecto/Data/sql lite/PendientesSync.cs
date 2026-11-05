@@ -144,6 +144,49 @@ namespace Nuevo_Proyecto.Data.SqlLite
             using var cmd = c.CreateCommand();
             cmd.CommandText = $"CREATE TABLE IF NOT EXISTS \"{Tabla}\" (Id INTEGER PRIMARY KEY AUTOINCREMENT, Datos TEXT NOT NULL)";
             cmd.ExecuteNonQuery();
+
+            var existentes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            cmd.CommandText = $"PRAGMA table_info(\"{Tabla}\")";
+            using (var r = cmd.ExecuteReader())
+                while (r.Read()) existentes.Add(r.GetString(1));
+
+            foreach (var (nombre, definicion) in ColumnasCola)
+            {
+                if (existentes.Contains(nombre)) continue;
+                cmd.CommandText = $"ALTER TABLE \"{Tabla}\" ADD COLUMN {nombre} {definicion}";
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        private static readonly (string Nombre, string Definicion)[] ColumnasCola =
+        {
+            ("OperacionId", "TEXT"),
+            ("NombreEntidad", "TEXT"),
+            ("Accion", "TEXT"),
+            ("IdentificadorEntidad", "TEXT"),
+            ("Estado", "TEXT NOT NULL DEFAULT 'PENDIENTE'"),
+            ("Intentos", "INTEGER NOT NULL DEFAULT 0"),
+            ("CreadaUtc", "TEXT"),
+            ("UltimoIntentoUtc", "TEXT"),
+            ("UltimoError", "TEXT"),
+        };
+
+        private static string Identificador(OpPendiente op)
+        {
+            try
+            {
+                var clave = op.Clave;
+                if (clave == null || clave.Count == 0)
+                {
+                    var pk = Info(op.Tabla)?.Pk;
+                    if (pk != null && op.Valores != null)
+                        clave = pk.Where(op.Valores.ContainsKey).ToDictionary(k => k, k => op.Valores[k]);
+                }
+                if (clave != null && clave.Count > 0)
+                    return string.Join(", ", clave.Select(kv => $"{kv.Key}={kv.Value}"));
+            }
+            catch { }
+            return op.Tipo == "SQL" ? "-" : "(nuevo)";
         }
 
         public static bool HayPendientes()
@@ -165,11 +208,21 @@ namespace Nuevo_Proyecto.Data.SqlLite
             {
                 using var cmd = con.CreateCommand();
                 cmd.Transaction = tx;
-                cmd.CommandText = $"INSERT INTO \"{Tabla}\" (Datos) VALUES ($d)";
-                var p = cmd.CreateParameter();
-                p.ParameterName = "$d";
-                p.Value = JsonSerializer.Serialize(op);
-                cmd.Parameters.Add(p);
+                cmd.CommandText = $"INSERT INTO \"{Tabla}\" (OperacionId, NombreEntidad, Accion, IdentificadorEntidad, Estado, Intentos, CreadaUtc, Datos) " +
+                                  "VALUES ($op, $ent, $acc, $idn, 'PENDIENTE', 0, $cre, $d)";
+                void Par(string nombre, object? valor)
+                {
+                    var p = cmd.CreateParameter();
+                    p.ParameterName = nombre;
+                    p.Value = valor ?? DBNull.Value;
+                    cmd.Parameters.Add(p);
+                }
+                Par("$op", Guid.NewGuid().ToString());
+                Par("$ent", op.Tipo == "SQL" ? "SQL" : op.Tabla);
+                Par("$acc", op.Tipo == "SQL" ? "EJECUTAR" : op.Operacion);
+                Par("$idn", Identificador(op));
+                Par("$cre", DateTime.UtcNow.ToString("o"));
+                Par("$d", JsonSerializer.Serialize(op));
                 cmd.ExecuteNonQuery();
             }
             finally
